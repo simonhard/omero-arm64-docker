@@ -50,10 +50,6 @@ jobs:
           restore-keys: buildx-web-
 
       - name: Clone upstream repos
-        run: python3 build.py --server-only --no-cache 2>&1 | head -20 || true
-        # We only need the clone step; actual build uses docker/build-push-action below
-
-      - name: Clone upstream repos (both)
         run: |
           mkdir -p _build
           git clone --depth 1 https://github.com/ome/omero-server-docker.git _build/omero-server-docker
