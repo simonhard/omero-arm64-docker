@@ -24,6 +24,8 @@ nginx (:8094 / :8443)
 
 Requires: Docker Desktop (arm64 mode), ~5 GB disk.
 
+You must create a `.env` file before starting the stack: Docker Compose will not start without the required variables. Copy `.env.example` to `.env`, then set the passwords as in the steps below.
+
 ```bash
 git clone https://github.com/simonhard/omero-arm64-docker.git
 cd omero-arm64-docker
@@ -80,6 +82,7 @@ volumes:
 | `docker-compose.yml` | Stack orchestration |
 | `nginx.conf` | Reverse proxy (10G upload, 600s timeout) |
 | `.env.example` | Credentials template |
+| `.env` | Local credentials (not in git); copy from `.env.example` |
 
 ## Releasing a new version
 
