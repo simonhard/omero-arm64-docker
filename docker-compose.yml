@@ -13,7 +13,7 @@
 services:
 
   postgres:
-    image: postgres:16
+    image: postgres:16-bookworm
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${OMERO_DB_USER:-omero}
