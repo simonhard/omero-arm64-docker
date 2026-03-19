@@ -49,7 +49,7 @@ Requires additionally: Python 3, Git, ~20 GB disk, ~20–40 min.
 python3 build.py
 
 # Options
-python3 build.py --omero-version 5.6.17
+python3 build.py --omero-server-version 5.6.17
 python3 build.py --platform linux/amd64
 python3 build.py --server-only
 python3 build.py --help
