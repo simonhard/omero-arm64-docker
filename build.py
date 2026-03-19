@@ -12,7 +12,7 @@ Steps:
 Usage:
   python3 build.py                         # build both images (arm64)
   python3 build.py --platform linux/amd64  # build for a different platform
-  python3 build.py --omero-version 5.6.17  # override OMERO version
+  python3 build.py --omero-server-version 5.6.17  # override OMERO version
   python3 build.py --push                  # build and push to registry
   python3 build.py --registry ghcr.io/myorg --tag v1.2.0
   python3 build.py --server-only
@@ -30,7 +30,7 @@ UPSTREAM_REPOS = {
 }
 
 DEFAULT_REGISTRY = "ghcr.io/simonhard"
-DEFAULT_OMERO_VERSION = "5.6.17"
+DEFAULT_OMERO_SERVER_VERSION = "5.6.17"
 DEFAULT_PLATFORM = "linux/arm64"
 
 
@@ -42,9 +42,9 @@ def parse_args() -> argparse.Namespace:
         help=f"Docker target platform (default: {DEFAULT_PLATFORM})",
     )
     parser.add_argument(
-        "--omero-version",
-        default=DEFAULT_OMERO_VERSION,
-        help=f"OMERO version to install (default: {DEFAULT_OMERO_VERSION})",
+        "--omero-server-version",
+        default=DEFAULT_OMERO_SERVER_VERSION,
+        help=f"OMERO version to install (default: {DEFAULT_OMERO_SERVER_VERSION})",
     )
     parser.add_argument(
         "--registry",
