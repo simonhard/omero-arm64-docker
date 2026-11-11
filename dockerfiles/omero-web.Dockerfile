@@ -48,9 +48,13 @@ RUN find /opt/setup/roles -name '*.yml' -exec \
         -e 's/manylinux_2_28_x86_64/manylinux_2_28_aarch64/g' \
       {} +
 
+# OMERO.web release installed from PyPI (pinned for reproducible images).
+ARG OMERO_WEB_VERSION=5.33.3
+
 # Run Ansible provisioning and clean up in the same layer.
 RUN ansible-playbook playbook.yml \
-      -e 'ansible_python_interpreter=/usr/bin/python3' && \
+      -e 'ansible_python_interpreter=/usr/bin/python3' \
+      -e omero_web_release=$OMERO_WEB_VERSION && \
     dnf -y clean all && \
     rm -fr /var/cache
 
