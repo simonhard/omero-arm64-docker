@@ -10,14 +10,20 @@ Steps:
   3. Optionally push to a registry
 
 Usage:
-  python3 build.py                         # build both images (arm64)
+  python3 build.py                         # build all images (arm64)
   python3 build.py --platform linux/amd64  # build for a different platform
   python3 build.py --omero-server-version 5.6.18  # override OMERO.server version
   python3 build.py --omero-web-version 5.33.3     # override OMERO.web version
   python3 build.py --push                  # build and push to registry
   python3 build.py --registry ghcr.io/myorg --tag v1.2.0
   python3 build.py --server-only
-  python3 build.py --web-only
+  python3 build.py --web-only               # omero-web and omero-web-standalone
+  python3 build.py --no-standalone          # skip omero-web-standalone
+
+Images:
+  omero-server-arm64           OMERO.server (incl. OMERO.figure export script)
+  omero-web-arm64              OMERO.web
+  omero-web-standalone-arm64   OMERO.web plus OME web apps (iviewer, figure, ...)
 """
 
 import argparse
@@ -79,6 +85,11 @@ def parse_args() -> argparse.Namespace:
         help="Build only omero-web",
     )
     parser.add_argument(
+        "--no-standalone",
+        action="store_true",
+        help="Skip the omero-web-standalone image",
+    )
+    parser.add_argument(
         "--no-cache",
         action="store_true",
         help="Pass --no-cache to docker buildx build",
@@ -116,6 +127,7 @@ def build_image(
     tags: list[str],
     platform: str,
     build_args: dict[str, str],
+    target: str | None,
     push: bool,
     no_cache: bool,
 ) -> None:
@@ -128,6 +140,8 @@ def build_image(
         cmd += ["--tag", tag]
     for key, value in build_args.items():
         cmd += ["--build-arg", f"{key}={value}"]
+    if target:
+        cmd += ["--target", target]
     if push:
         cmd.append("--push")
     else:
@@ -162,8 +176,17 @@ def main() -> None:
             "upstream_repo": "omero-web-docker",
             "dockerfile": dockerfiles_dir / "omero-web.Dockerfile",
             "image_name": "omero-web-arm64",
+            "target": "omero-web",
             "build_args": {"OMERO_WEB_VERSION": args.omero_web_version},
         })
+        if not args.no_standalone:
+            images.append({
+                "upstream_repo": "omero-web-docker",
+                "dockerfile": dockerfiles_dir / "omero-web.Dockerfile",
+                "image_name": "omero-web-standalone-arm64",
+                "target": "omero-web-standalone",
+                "build_args": {"OMERO_WEB_VERSION": args.omero_web_version},
+            })
 
     print("=" * 60)
     print("OMERO ARM64 Image Builder")
@@ -197,6 +220,7 @@ def main() -> None:
             tags=tags,
             platform=args.platform,
             build_args=img["build_args"],
+            target=img.get("target"),
             push=args.push,
             no_cache=args.no_cache,
         )

@@ -112,6 +112,24 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then ARCH=aarch64; else ARCH=x86_64; fi && \
     "https://github.com/Yelp/dumb-init/releases/download/v1.2.5/dumb-init_1.2.5_${ARCH}" && \
     chmod +x /usr/local/bin/dumb-init
 
+# OMERO.figure export script (PDF/TIFF export runs on the server). Its dependencies
+# reportlab and markdown come with the upstream playbook. Baked into the image
+# because a script uploaded at runtime lives in lib/scripts (not a volume) and is
+# lost when the container is recreated. Keep in sync with OMERO_FIGURE_VERSION of
+# the web standalone image; OMERO.figure warns in the UI if the script is outdated.
+ARG OMERO_FIGURE_VERSION=8.0.1
+RUN /opt/omero/server/venv3/bin/pip download --no-deps --no-cache-dir --only-binary=:all: \
+        -d /tmp/omero-figure "omero-figure==${OMERO_FIGURE_VERSION}" && \
+    /opt/omero/server/venv3/bin/python -c "import glob, os, zipfile; \
+src = 'omero_figure/scripts/omero/figure_scripts/'; \
+dst = '/opt/omero/server/OMERO.server/lib/scripts/omero/figure_scripts/'; \
+z = zipfile.ZipFile(glob.glob('/tmp/omero-figure/*.whl')[0]); \
+names = [n for n in z.namelist() if n.startswith(src) and not n.endswith('/') and (n == src + 'Figure_To_Pdf.py' or n.startswith(src + 'pilfonts/'))]; \
+assert src + 'Figure_To_Pdf.py' in names, 'Figure_To_Pdf.py not found in wheel'; \
+[(os.makedirs(os.path.dirname(dst + n[len(src):]), exist_ok=True), open(dst + n[len(src):], 'wb').write(z.read(n))) for n in names]" && \
+    chown -R omero-server:omero-server /opt/omero/server/OMERO.server/lib/scripts/omero/figure_scripts && \
+    rm -rf /tmp/omero-figure
+
 ADD entrypoint.sh /usr/local/bin/
 ADD 50-config.py 60-database.sh 99-run.sh /startup/
 

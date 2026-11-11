@@ -45,6 +45,23 @@ The `omero-server.Dockerfile` compiles Ice 3.6.5 C++ from source during the buil
 
 ---
 
+## OME web apps (omero-web-standalone image)
+
+- **License**: GNU Affero General Public License v3.0 (AGPL-3.0)
+- **Copyright**: Open Microscopy Environment; German BioImaging (autotag, tagsearch)
+- **Sources**:
+  - OMERO.figure: https://github.com/ome/omero-figure
+  - OMERO.iviewer: https://github.com/ome/omero-iviewer
+  - omero-mapr: https://github.com/ome/omero-mapr
+  - omero-parade: https://github.com/ome/omero-parade
+  - omero-fpbioimage: https://github.com/ome/omero-fpbioimage
+  - omero-autotag: https://github.com/German-BioImaging/omero-autotag
+  - omero-tagsearch: https://github.com/German-BioImaging/omero-tagsearch
+
+Installed from PyPI at image build time into the `omero-web-standalone` image. The OMERO.figure export script (`Figure_To_Pdf.py`, with its fonts) is also copied from the OMERO.figure wheel into the `omero-server` image. None of these are included in this repository.
+
+---
+
 ## dumb-init
 
 - **License**: MIT
