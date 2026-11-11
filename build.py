@@ -12,7 +12,8 @@ Steps:
 Usage:
   python3 build.py                         # build both images (arm64)
   python3 build.py --platform linux/amd64  # build for a different platform
-  python3 build.py --omero-server-version 5.6.17  # override OMERO version
+  python3 build.py --omero-server-version 5.6.18  # override OMERO.server version
+  python3 build.py --omero-web-version 5.33.3     # override OMERO.web version
   python3 build.py --push                  # build and push to registry
   python3 build.py --registry ghcr.io/myorg --tag v1.2.0
   python3 build.py --server-only
@@ -30,7 +31,8 @@ UPSTREAM_REPOS = {
 }
 
 DEFAULT_REGISTRY = "ghcr.io/simonhard"
-DEFAULT_OMERO_SERVER_VERSION = "5.6.17"
+DEFAULT_OMERO_SERVER_VERSION = "5.6.18"
+DEFAULT_OMERO_WEB_VERSION = "5.33.3"
 DEFAULT_PLATFORM = "linux/arm64"
 
 
@@ -44,7 +46,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--omero-server-version",
         default=DEFAULT_OMERO_SERVER_VERSION,
-        help=f"OMERO version to install (default: {DEFAULT_OMERO_SERVER_VERSION})",
+        help=f"OMERO.server version to install (default: {DEFAULT_OMERO_SERVER_VERSION})",
+    )
+    parser.add_argument(
+        "--omero-web-version",
+        default=DEFAULT_OMERO_WEB_VERSION,
+        help=f"OMERO.web version to install (default: {DEFAULT_OMERO_WEB_VERSION})",
     )
     parser.add_argument(
         "--registry",
@@ -148,20 +155,21 @@ def main() -> None:
             "upstream_repo": "omero-server-docker",
             "dockerfile": dockerfiles_dir / "omero-server.Dockerfile",
             "image_name": "omero-server-arm64",
-            "build_args": {"OMERO_VERSION": args.omero_version},
+            "build_args": {"OMERO_VERSION": args.omero_server_version},
         })
     if build_web:
         images.append({
             "upstream_repo": "omero-web-docker",
             "dockerfile": dockerfiles_dir / "omero-web.Dockerfile",
             "image_name": "omero-web-arm64",
-            "build_args": {},
+            "build_args": {"OMERO_WEB_VERSION": args.omero_web_version},
         })
 
     print("=" * 60)
     print("OMERO ARM64 Image Builder")
     print(f"  platform      : {args.platform}")
-    print(f"  omero_version : {args.omero_version}")
+    print(f"  omero_server  : {args.omero_server_version}")
+    print(f"  omero_web     : {args.omero_web_version}")
     print(f"  registry      : {args.registry}")
     print(f"  tag           : {args.tag}")
     print(f"  push          : {args.push}")

@@ -68,7 +68,7 @@ jobs:
             ghcr.io/simonhard/omero-server-arm64:${{ github.ref_name }}
             ghcr.io/simonhard/omero-server-arm64:latest
           build-args: |
-            OMERO_VERSION=5.6.17
+            OMERO_VERSION=5.6.18
           labels: |
             org.opencontainers.image.version=${{ steps.meta.outputs.version }}
             org.opencontainers.image.revision=${{ github.sha }}
@@ -83,6 +83,8 @@ jobs:
           tags: |
             ghcr.io/simonhard/omero-web-arm64:${{ github.ref_name }}
             ghcr.io/simonhard/omero-web-arm64:latest
+          build-args: |
+            OMERO_WEB_VERSION=5.33.3
           labels: |
             org.opencontainers.image.version=${{ steps.meta.outputs.version }}
             org.opencontainers.image.revision=${{ github.sha }}

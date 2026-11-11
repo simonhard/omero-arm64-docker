@@ -64,7 +64,7 @@ jobs:
           push: false
           tags: ghcr.io/simonhard/omero-server-arm64:ci
           build-args: |
-            OMERO_VERSION=5.6.17
+            OMERO_VERSION=5.6.18
           cache-from: type=local,src=/tmp/.buildx-cache-server
           cache-to: type=local,dest=/tmp/.buildx-cache-server-new,mode=max
 
@@ -76,6 +76,8 @@ jobs:
           platforms: linux/arm64
           push: false
           tags: ghcr.io/simonhard/omero-web-arm64:ci
+          build-args: |
+            OMERO_WEB_VERSION=5.33.3
           cache-from: type=local,src=/tmp/.buildx-cache-web
           cache-to: type=local,dest=/tmp/.buildx-cache-web-new,mode=max
 

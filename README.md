@@ -9,6 +9,15 @@ Official OMERO images are x86_64-only. This project builds native `linux/arm64` 
 
 Pre-built images are published to GHCR: `ghcr.io/simonhard/omero-server-arm64` and `ghcr.io/simonhard/omero-web-arm64`.
 
+## Versions
+
+| Release | OMERO.server | OMERO.web | ZeroC Ice |
+|---|---|---|---|
+| v1.1.0 | 5.6.18 | 5.33.3 | 3.6.5 |
+| v1.0.x | 5.6.17 | newest on PyPI at build time | 3.6.5 |
+
+Official OME images for these versions are still `linux/amd64` only (checked 2026-11-11).
+
 ## Architecture
 
 Four containers orchestrated via Docker Compose:
@@ -49,7 +58,8 @@ Requires additionally: Python 3, Git, ~20 GB disk, ~20–40 min.
 python3 build.py
 
 # Options
-python3 build.py --omero-server-version 5.6.17
+python3 build.py --omero-server-version 5.6.18
+python3 build.py --omero-web-version 5.33.3
 python3 build.py --platform linux/amd64
 python3 build.py --server-only
 python3 build.py --help
@@ -86,11 +96,13 @@ volumes:
 
 ## Releasing a new version
 
-Push a version tag to trigger the release workflow and push new images to GHCR:
+1. Bump the versions: `OMERO_VERSION` (server) and `OMERO_WEB_VERSION` (web) in `dockerfiles/`, `build.py`, both workflows in `.github/workflows/`, and the table under *Versions*.
+2. Merge via pull request once CI is green.
+3. Push a version tag to trigger the release workflow and push new images to GHCR:
 
 ```bash
-git tag v1.0.0
-git push origin v1.0.0
+git tag v1.1.0
+git push origin v1.1.0
 ```
 
 ## License
