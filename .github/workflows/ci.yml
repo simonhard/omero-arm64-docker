@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 #
-# CI workflow: builds both ARM64 images on every push to main and on pull
+# CI workflow: builds all three ARM64 images (server, web, web-standalone) on every push to main and on pull
 # requests. Images are loaded locally (not pushed to any registry) to verify
 # that the build succeeds.
 #
@@ -75,11 +75,26 @@ jobs:
           file: dockerfiles/omero-web.Dockerfile
           platforms: linux/arm64
           push: false
+          target: omero-web
           tags: ghcr.io/simonhard/omero-web-arm64:ci
           build-args: |
             OMERO_WEB_VERSION=5.33.3
           cache-from: type=local,src=/tmp/.buildx-cache-web
           cache-to: type=local,dest=/tmp/.buildx-cache-web-new,mode=max
+
+      # Reuses the omero-web stage from the builder cache of the previous step.
+      - name: Build omero-web-standalone (arm64)
+        uses: docker/build-push-action@v6
+        with:
+          context: _build/omero-web-docker
+          file: dockerfiles/omero-web.Dockerfile
+          platforms: linux/arm64
+          push: false
+          target: omero-web-standalone
+          tags: ghcr.io/simonhard/omero-web-standalone-arm64:ci
+          build-args: |
+            OMERO_WEB_VERSION=5.33.3
+          cache-from: type=local,src=/tmp/.buildx-cache-web
 
       # Rotate cache to avoid unbounded growth
       - name: Rotate cache
